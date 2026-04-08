@@ -3,76 +3,186 @@
 	<head>
 	    <meta charset="UTF-8">
 	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	    <title>龙虾养殖管理系统</title>
+	    <title>龙虾智慧养殖监控系统</title>
 	    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 	    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 	    <style>
-	        body { background-color: #f3f4f6; }
-	        .nav-active { background-color: #0d9488; color: white; }
-	        .fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
-	        .fade-enter-from, .fade-leave-to { opacity: 0; }
+	        body { 
+	            background-color: #0f172a; 
+	            color: #e2e8f0; 
+	            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	            /* 科技感网格背景 */
+	            background-image: 
+	                linear-gradient(rgba(6, 182, 212, 0.05) 1px, transparent 1px),
+	                linear-gradient(90deg, rgba(6, 182, 212, 0.05) 1px, transparent 1px);
+	            background-size: 30px 30px;
+	        }
+	        /* 霓虹发光效果 */
+	        .glow-cyan { box-shadow: 0 0 10px rgba(6, 182, 212, 0.4), inset 0 0 10px rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.5); }
+	        .glow-green { box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); border: 1px solid rgba(16, 185, 129, 0.5); }
+	        .glow-red { box-shadow: 0 0 10px rgba(239, 68, 68, 0.4); border: 1px solid rgba(239, 68, 68, 0.5); }
+	        .glow-purple { box-shadow: 0 0 10px rgba(139, 92, 246, 0.4); border: 1px solid rgba(139, 92, 246, 0.5); }
+	        .glow-amber { box-shadow: 0 0 10px rgba(245, 158, 11, 0.4); border: 1px solid rgba(245, 158, 11, 0.5); }
+	        /* 毛玻璃卡片 */
+	        .cyber-card {
+	            background: rgba(30, 41, 59, 0.7);
+	            backdrop-filter: blur(8px);
+	            border-radius: 8px;
+	            border: 1px solid rgba(100, 116, 139, 0.3);
+	        }
+	        /* 输入框样式 */
+	        .cyber-input {
+	            background: rgba(15, 23, 42, 0.8);
+	            border: 1px solid rgba(6, 182, 212, 0.4);
+	            color: #fff;
+	            border-radius: 4px;
+	            padding: 8px 12px;
+	            width: 100%;
+	            outline: none;
+	            transition: all 0.3s;
+	        }
+	        .cyber-input:focus {
+	            box-shadow: 0 0 10px rgba(6, 182, 212, 0.3);
+	            border-color: #06b6d4;
+	        }
+	        /* 表格样式 */
+	        .cyber-table { width: 100%; border-collapse: collapse; }
+	        .cyber-table th { color: #94a3b8; font-weight: normal; border-bottom: 1px solid rgba(6, 182, 212, 0.3); text-align: left; padding: 12px; }
+	        .cyber-table td { border-bottom: 1px solid rgba(51, 65, 85, 0.5); padding: 12px; }
+	        .cyber-table tr:hover td { background: rgba(6, 182, 212, 0.05); }
+	        /* 按钮样式增强 */
+	        .cyber-btn {
+	            background: rgba(6, 182, 212, 0.2);
+	            border: 1px solid #06b6d4;
+	            color: #06b6d4;
+	            padding: 6px 16px;
+	            border-radius: 4px;
+	            cursor: pointer;
+	            transition: all 0.3s;
+	            font-weight: bold;
+	        }
+	        .cyber-btn:hover { background: rgba(6, 182, 212, 0.4); box-shadow: 0 0 10px rgba(6, 182, 212, 0.5); }
+	        .cyber-btn-primary { background: #06b6d4; color: #0f172a; }
+	        .cyber-btn-primary:hover { background: #22d3ee; box-shadow: 0 0 15px rgba(6, 182, 212, 0.6); }
+	        .cyber-btn-danger { border-color: #ef4444; color: #ef4444; background: rgba(239, 68, 68, 0.1); }
+	        .cyber-btn-danger:hover { background: rgba(239, 68, 68, 0.3); box-shadow: 0 0 10px rgba(239, 68, 68, 0.5); }
+	        .cyber-btn-ghost { border-color: #64748b; color: #94a3b8; background: transparent; }
+	        .cyber-btn-ghost:hover { border-color: #94a3b8; color: #e2e8f0; }
+	        /* 闪烁警告动画 */
+	        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+	        .warning-blink { color: #ef4444; animation: blink 1s infinite; }
+	        /* 进度条 */
+	        .progress-bar { height: 6px; background: rgba(6, 182, 212, 0.2); border-radius: 3px; overflow: hidden; }
+	        .progress-fill { height: 100%; background: linear-gradient(90deg, #06b6d4, #10b981); box-shadow: 0 0 10px rgba(6, 182, 212, 0.6); }
+	        /* 滚动条美化 */
+	        ::-webkit-scrollbar { width: 6px; }
+	        ::-webkit-scrollbar-track { background: #0f172a; }
+	        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
+	        ::-webkit-scrollbar-thumb:hover { background: #334155; }
 	    </style>
 	</head>
-	<body>
-	<div id="app" class="min-h-screen flex flex-col">
+	<body class="min-h-screen flex flex-col">
+	<div id="app" class="flex flex-col h-screen">
 	    <!-- 顶部导航 -->
-	    <nav class="bg-teal-800 text-white p-4 shadow-md flex justify-between items-center">
-	        <h1 class="text-xl font-bold tracking-wider">🦞 龙虾养殖管理系统</h1>
+	    <nav class="bg-slate-900/80 backdrop-filter backdrop-blur-md border-b border-cyan-900/50 p-4 flex justify-between items-center z-10 shadow-lg shadow-cyan-900/10">
+	        <h1 class="text-xl font-bold tracking-widest text-cyan-400 flex items-center">
+	            <span class="mr-2">🦞</span> 龙虾智慧监控系统 <span class="text-xs ml-2 text-slate-500 border border-slate-600 px-2 py-0.5 rounded">v2.0</span>
+	        </h1>
 	        <div class="flex space-x-2">
-	            <button @click="currentTab='dashboard'" :class="currentTab==='dashboard' ? 'bg-teal-600' : 'hover:bg-teal-700'" class="px-3 py-1 rounded transition">首页概览</button>
-	            <button @click="currentTab='pond'" :class="currentTab==='pond' ? 'bg-teal-600' : 'hover:bg-teal-700'" class="px-3 py-1 rounded transition">地块管理</button>
-	            <button @click="currentTab='feed'" :class="currentTab==='feed' ? 'bg-teal-600' : 'hover:bg-teal-700'" class="px-3 py-1 rounded transition">饲料投放</button>
-	            <button @click="currentTab='hydrology'" :class="currentTab==='hydrology' ? 'bg-teal-600' : 'hover:bg-teal-700'" class="px-3 py-1 rounded transition">水文资料</button>
-	            <button @click="currentTab='finance'" :class="currentTab==='finance' ? 'bg-teal-600' : 'hover:bg-teal-700'" class="px-3 py-1 rounded transition">收支管理</button>
-	            <button @click="currentTab='settings'" :class="currentTab==='settings' ? 'bg-teal-600' : 'hover:bg-teal-700'" class="px-3 py-1 rounded transition">系统设置</button>
+	            <button v-for="(title, key) in titles" :key="key" @click="currentTab=key" 
+	                    :class="currentTab===key ? 'bg-cyan-800/50 text-cyan-300 border-cyan-500' : 'border-slate-700 text-slate-400 hover:border-slate-500 hover:text-slate-200'" 
+	                    class="px-3 py-1.5 rounded border transition duration-300 text-sm font-medium">
+	                {{ title }}
+	            </button>
 	        </div>
 	    </nav>
 	    <main class="flex-1 p-6 overflow-auto">
 	        <!-- 首页概览 -->
-	        <div v-if="currentTab==='dashboard'" class="grid grid-cols-1 md:grid-cols-4 gap-6">
-	            <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-teal-500">
-	                <h2 class="text-gray-500 text-sm">养殖地块</h2>
-	                <p class="text-3xl font-bold text-teal-700">{{ ponds.length }} 块</p>
+	        <div v-if="currentTab==='dashboard'">
+	            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+	                <div class="cyber-card glow-cyan p-5">
+	                    <h2 class="text-slate-400 text-sm mb-2">养殖地块</h2>
+	                    <p class="text-3xl font-bold text-cyan-400">{{ ponds.length }} <span class="text-sm font-normal">块</span></p>
+	                </div>
+	                <div class="cyber-card glow-green p-5">
+	                    <h2 class="text-slate-400 text-sm mb-2">累计收入</h2>
+	                    <p class="text-3xl font-bold text-emerald-400">¥ {{ totalIncome.toFixed(2) }}</p>
+	                </div>
+	                <div class="cyber-card glow-red p-5">
+	                    <h2 class="text-slate-400 text-sm mb-2">累计支出</h2>
+	                    <p class="text-3xl font-bold text-red-400">¥ {{ totalCost.toFixed(2) }}</p>
+	                </div>
+	                <div class="cyber-card glow-purple p-5">
+	                    <h2 class="text-slate-400 text-sm mb-2">净收益</h2>
+	                    <p class="text-3xl font-bold" :class="totalIncome - totalCost >= 0 ? 'text-emerald-400' : 'text-red-400'">
+	                        ¥ {{ (totalIncome - totalCost).toFixed(2) }}
+	                    </p>
+	                </div>
 	            </div>
-	            <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-blue-500">
-	                <h2 class="text-gray-500 text-sm">累计收入</h2>
-	                <p class="text-3xl font-bold text-blue-700">¥ {{ totalIncome.toFixed(2) }}</p>
-	            </div>
-	            <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-red-500">
-	                <h2 class="text-gray-500 text-sm">累计支出</h2>
-	                <p class="text-3xl font-bold text-red-700">¥ {{ totalCost.toFixed(2) }}</p>
-	            </div>
-	            <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-green-500">
-	                <h2 class="text-gray-500 text-sm">净收益</h2>
-	                <p class="text-3xl font-bold" :class="totalIncome - totalCost >= 0 ? 'text-green-700' : 'text-red-700'">¥ {{ (totalIncome - totalCost).toFixed(2) }}</p>
+	            <div class="cyber-card p-5">
+	                <h3 class="text-lg font-bold text-slate-300 mb-4 border-l-4 border-cyan-500 pl-3">地块养殖进度监控 (目标: 90天)</h3>
+	                <div class="space-y-4">
+	                    <div v-if="ponds.length === 0" class="text-slate-500 text-sm">暂无地块数据</div>
+	                    <div v-for="pond in ponds" :key="pond.id" class="flex items-center space-x-4">
+	                        <div class="w-24 text-sm text-cyan-300 truncate">{{ pond.name }}</div>
+	                        <div class="flex-1">
+	                            <div class="progress-bar">
+	                                <div class="progress-fill" :style="{ width: getPondProgress(pond) + '%' }"></div>
+	                            </div>
+	                        </div>
+	                        <div class="w-24 text-right text-xs text-slate-400">{{ getPondDays(pond) }} 天 / {{ getPondProgress(pond).toFixed(0) }}%</div>
+	                    </div>
+	                </div>
 	            </div>
 	        </div>
-	        <!-- 通用列表与表单模板 -->
-	        <div v-else class="bg-white p-6 rounded-lg shadow-sm">
+	        <!-- 通用列表页 -->
+	        <div v-else class="cyber-card p-6">
 	            <div class="flex justify-between items-center mb-6">
-	                <h2 class="text-2xl font-bold text-gray-800">{{ titles[currentTab] }}</h2>
-	                <button @click="openModal(null)" class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded shadow transition">+ 新增记录</button>
+	                <h2 class="text-xl font-bold text-slate-200 border-l-4 border-cyan-500 pl-3">{{ titles[currentTab] }}</h2>
+	                <div class="flex items-center space-x-3">
+	                    <!-- 收支管理特有的筛选 -->
+	                    <select v-if="currentTab==='finance'" v-model="financeFilter" class="cyber-input w-32 text-sm py-1">
+	                        <option value="all">全部收支</option>
+	                        <option value="收入">仅收入</option>
+	                        <option value="支出">仅支出</option>
+	                    </select>
+	                    <button @click="openModal(null)" class="cyber-btn cyber-btn-primary">+ 新增记录</button>
+	                </div>
 	            </div>
 	            <div class="overflow-x-auto">
-	                <table class="min-w-full bg-white border">
+	                <table class="cyber-table">
 	                    <thead>
-	                        <tr class="bg-gray-100 text-left text-sm text-gray-600">
-	                            <th class="py-3 px-4 border-b" v-for="field in fields[currentTab]" :key="field.key">{{ field.label }}</th>
-	                            <th class="py-3 px-4 border-b text-center">操作</th>
+	                        <tr>
+	                            <th v-for="field in fields[currentTab]" :key="field.key">{{ field.label }}</th>
+	                            <th class="text-center">操作</th>
 	                        </tr>
 	                    </thead>
 	                    <tbody>
-	                        <tr v-if="currentData.length === 0"><td :colspan="fields[currentTab].length + 1" class="py-4 text-center text-gray-400">暂无数据</td></tr>
-	                        <tr v-for="(item, index) in currentData" :key="item.id" class="hover:bg-gray-50 border-b text-sm">
-	                            <td class="py-3 px-4" v-for="field in fields[currentTab]" :key="field.key">
-	                                <span v-if="field.key === 'pondId'">{{ getPondName(item[field.key]) }}</span>
-	                                <span v-else-if="field.type === 'date'">{{ item[field.key] }}</span>
-	                                <span v-else-if="field.key === 'amount' || field.key === 'price'">¥ {{ Number(item[field.key]).toFixed(2) }}</span>
-	                                <span v-else>{{ item[field.key] }}</span>
+	                        <tr v-if="filteredData.length === 0"><td :colspan="fields[currentTab].length + 1" class="text-center text-slate-500 py-8">暂无数据</td></tr>
+	                        <tr v-for="(item, index) in filteredData" :key="item.id">
+	                            <td v-for="field in fields[currentTab]" :key="field.key">
+	                                <!-- 地块关联 -->
+	                                <span v-if="field.key === 'pondId'" class="text-cyan-400">{{ getPondName(item[field.key]) }}</span>
+	                                <!-- 水文预警逻辑 -->
+	                                <span v-else-if="currentTab==='hydrology' && field.key==='ph'" :class="Number(item[field.key]) < 7.0 || Number(item[field.key]) > 8.5 ? 'warning-blink' : 'text-emerald-400'">
+	                                    {{ item[field.key] }}
+	                                    <span class="text-red-500 text-xs ml-1" v-if="Number(item[field.key]) < 7.0 || Number(item[field.key]) > 8.5">⚠异常</span>
+	                                </span>
+	                                <span v-else-if="currentTab==='hydrology' && field.key==='oxygen'" :class="Number(item[field.key]) < 5.0 ? 'warning-blink' : 'text-emerald-400'">
+	                                    {{ item[field.key] }}
+	                                    <span class="text-red-500 text-xs ml-1" v-if="Number(item[field.key]) < 5.0">⚠偏低</span>
+	                                </span>
+	                                <!-- 金额颜色 -->
+	                                <span v-else-if="field.key === 'amount'" :class="item.type==='收入' ? 'text-emerald-400' : 'text-red-400'">
+	                                    ¥ {{ Number(item[field.key]).toFixed(2) }}
+	                                </span>
+	                                <span v-else-if="field.key === 'cost'" class="text-amber-400">¥ {{ Number(item[field.key]).toFixed(2) }}</span>
+	                                <!-- 普通 -->
+	                                <span v-else class="text-slate-300">{{ item[field.key] }}</span>
 	                            </td>
-	                            <td class="py-3 px-4 text-center">
-	                                <button @click="openModal(item)" class="text-blue-500 hover:text-blue-700 mr-2">编辑</button>
-	                                <button @click="deleteItem(item.id)" class="text-red-500 hover:text-red-700">删除</button>
+	                            <td class="text-center space-x-2">
+	                                <button @click="openModal(item)" class="cyber-btn text-xs py-1 px-2">编辑</button>
+	                                <button @click="deleteItem(item.id)" class="cyber-btn cyber-btn-danger text-xs py-1 px-2">删除</button>
 	                            </td>
 	                        </tr>
 	                    </tbody>
@@ -80,70 +190,98 @@
 	            </div>
 	        </div>
 	        <!-- 系统设置页 -->
-	        <div v-if="currentTab==='settings'" class="bg-white p-6 rounded-lg shadow-sm mt-6">
-	            <h2 class="text-xl font-bold mb-4">数据管理</h2>
-	            <p class="text-gray-600 mb-4 text-sm">由于系统使用浏览器本地存储，请定期导出备份数据，以免清除浏览器缓存时丢失。更换设备或浏览器时，可导入恢复。</p>
+	        <div v-if="currentTab==='settings'" class="cyber-card p-6 mt-6">
+	            <h2 class="text-xl font-bold text-slate-200 border-l-4 border-amber-500 pl-3 mb-4">数据灾备中心</h2>
+	            <p class="text-slate-400 mb-6 text-sm">由于系统运行在浏览器本地，请定期导出备份数据，以免清除浏览器缓存时丢失。更换设备或浏览器时，可导入恢复。</p>
 	            <div class="flex space-x-4">
-	                <button @click="exportData" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow">导出备份</button>
-	                <label class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow cursor-pointer">
-	                    导入恢复
+	                <button @click="exportData" class="cyber-btn glow-green text-emerald-400 border-emerald-500 hover:bg-emerald-500/20">
+	                    下载备份数据
+	                </button>
+	                <label class="cyber-btn glow-amber text-amber-400 border-amber-500 hover:bg-amber-500/20 cursor-pointer">
+	                    导入恢复数据
 	                    <input type="file" @change="importData" class="hidden" accept=".json">
 	                </label>
 	            </div>
 	        </div>
 	    </main>
 	    <!-- 弹窗表单 -->
-	    <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-	        <div class="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 relative">
-	            <button @click="showModal = false" class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-xl font-bold">&times;</button>
-	            <h3 class="text-xl font-bold mb-4">{{ modalTitle }}</h3>
-	            <div class="space-y-4">
+	    <div v-if="showModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
+	        <div class="cyber-card glow-cyan w-full max-w-lg p-6 relative shadow-2xl shadow-cyan-900/30">
+	            <button @click="showModal = false" class="absolute top-3 right-3 text-slate-500 hover:text-cyan-400 text-2xl transition">&times;</button>
+	            <h3 class="text-xl font-bold text-cyan-400 mb-6 flex items-center">
+	                <span class="w-1 h-6 bg-cyan-500 mr-3 shadow-[0_0_10px_rgba(6,182,212,0.8)]"></span>
+	                {{ modalTitle }}
+	            </h3>
+	            <div class="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
 	                <div v-for="field in fields[currentTab]" :key="field.key">
-	                    <label class="block text-sm font-medium text-gray-700 mb-1">{{ field.label }}</label>
-	                    <select v-if="field.type === 'select'" v-model="formData[field.key]" class="w-full border-gray-300 rounded-md shadow-sm border p-2 focus:ring-teal-500 focus:border-teal-500">
-	                        <option value="">请选择</option>
+	                    <label class="block text-sm font-medium text-slate-400 mb-1">{{ field.label }}</label>
+	                    <select v-if="field.type === 'select'" v-model="formData[field.key]" class="cyber-input">
+	                        <option value="">请选择地块</option>
 	                        <option v-for="pond in ponds" :key="pond.id" :value="pond.id">{{ pond.name }}</option>
 	                    </select>
-	                    <input v-else :type="field.type || 'text'" v-model="formData[field.key]" class="w-full border-gray-300 rounded-md shadow-sm border p-2 focus:ring-teal-500 focus:border-teal-500">
+	                    <select v-else-if="field.type === 'financeType'" v-model="formData[field.key]" class="cyber-input">
+	                        <option value="支出">支出</option>
+	                        <option value="收入">收入</option>
+	                    </select>
+	                    <select v-else-if="field.type === 'financeCategory'" v-model="formData[field.key]" class="cyber-input">
+	                        <option value="" disabled>请选择分类</option>
+	                        <option v-if="formData.type==='收入'" value="成虾销售">成虾销售</option>
+	                        <option v-if="formData.type==='收入'" value="虾苗销售">虾苗销售</option>
+	                        <option v-if="formData.type==='收入'" value="其他收入">其他收入</option>
+	                        <option v-if="formData.type==='支出'" value="虾苗购买">虾苗购买</option>
+	                        <option v-if="formData.type==='支出'" value="饲料">饲料</option>
+	                        <option v-if="formData.type==='支出'" value="药品/消毒">药品/消毒</option>
+	                        <option v-if="formData.type==='支出'" value="电费">电费</option>
+	                        <option v-if="formData.type==='支出'" value="租金">租金</option>
+	                        <option v-if="formData.type==='支出'" value="设备维修">设备维修</option>
+	                        <option v-if="formData.type==='支出'" value="人工">人工</option>
+	                        <option v-if="formData.type==='支出'" value="其他支出">其他支出</option>
+	                    </select>
+	                    <input v-else :type="field.type || 'text'" v-model="formData[field.key]" class="cyber-input" :placeholder="'请输入' + field.label">
 	                </div>
 	            </div>
-	            <div class="mt-6 flex justify-end space-x-3">
-	                <button @click="showModal = false" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">取消</button>
-	                <button @click="saveItem" class="px-4 py-2 bg-teal-600 text-white rounded hover:bg-teal-700">保存</button>
+	            <div class="mt-8 flex justify-end space-x-3">
+	                <button @click="showModal = false" class="cyber-btn cyber-btn-ghost">取消</button>
+	                <button @click="saveItem" class="cyber-btn cyber-btn-primary shadow-[0_0_15px_rgba(6,182,212,0.4)]">确认保存</button>
 	            </div>
 	        </div>
 	    </div>
 	</div>
 	<script>
-	const { createApp, ref, computed, watch, onMounted } = Vue;
+	const { createApp, ref, computed, onMounted } = Vue;
 	createApp({
 	    setup() {
 	        const currentTab = ref('dashboard');
 	        const showModal = ref(false);
 	        const formData = ref({});
+	        const financeFilter = ref('all'); // 收支筛选器
 	        // 数据源
 	        const ponds = ref([]);
 	        const feedRecords = ref([]);
 	        const hydrologyRecords = ref([]);
 	        const financeRecords = ref([]);
-	        // 字段配置
 	        const titles = {
+	            dashboard: '系统首页',
 	            pond: '地块管理',
-	            feed: '饲料投放记录',
-	            hydrology: '水文资料管理',
-	            finance: '收支管理'
+	            feed: '饲料投放',
+	            hydrology: '水文资料',
+	            finance: '收支管理',
+	            settings: '系统设置'
 	        };
 	        const fields = {
 	            pond: [
 	                { key: 'name', label: '地块/塘口名称' },
 	                { key: 'area', label: '面积(亩)', type: 'number' },
-	                { key: 'status', label: '状态(如: 养殖中/空塘/清淤)' }
+	                { key: 'startDate', label: '投放虾苗日期', type: 'date' },
+	                { key: 'shrimpCount', label: '虾苗数量(尾)', type: 'number' },
+	                { key: 'status', label: '当前状态' }
 	            ],
 	            feed: [
 	                { key: 'date', label: '投放日期', type: 'date' },
 	                { key: 'pondId', label: '地块', type: 'select' },
-	                { key: 'feedType', label: '饲料类型' },
+	                { key: 'brand', label: '饲料品牌/名称' },
 	                { key: 'quantity', label: '投放量(kg)', type: 'number' },
+	                { key: 'unitPrice', label: '单价(元/kg)', type: 'number' },
 	                { key: 'notes', label: '备注' }
 	            ],
 	            hydrology: [
@@ -156,8 +294,8 @@
 	            ],
 	            finance: [
 	                { key: 'date', label: '日期', type: 'date' },
-	                { key: 'type', label: '类型(收入/支出)' },
-	                { key: 'category', label: '分类(虾苗/饲料/租金/卖虾等)' },
+	                { key: 'type', label: '类型', type: 'financeType' },
+	                { key: 'category', label: '分类', type: 'financeCategory' },
 	                { key: 'amount', label: '金额(元)', type: 'number' },
 	                { key: 'notes', label: '备注' }
 	            ]
@@ -171,16 +309,37 @@
 	                default: return [];
 	            }
 	        });
+	        // 财务列表增加筛选功能
+	        const filteredData = computed(() => {
+	            if (currentTab.value !== 'finance') return currentData.value;
+	            if (financeFilter.value === 'all') return financeRecords.value;
+	            return financeRecords.value.filter(f => f.type === financeFilter.value);
+	        });
 	        const modalTitle = computed(() => {
 	            const prefix = formData.value.id ? '编辑' : '新增';
 	            return prefix + (titles[currentTab.value] || '');
 	        });
-	        // 财务统计
 	        const totalIncome = computed(() => financeRecords.value.filter(f => f.type === '收入').reduce((sum, f) => sum + Number(f.amount || 0), 0));
 	        const totalCost = computed(() => financeRecords.value.filter(f => f.type === '支出').reduce((sum, f) => sum + Number(f.amount || 0), 0));
 	        const getPondName = (pondId) => {
 	            const pond = ponds.value.find(p => p.id === pondId);
-	            return pond ? pond.name : '未知地块';
+	            return pond ? pond.name : '未知';
+	        };
+	        // 地块养殖天数计算
+	        const getPondDays = (pond) => {
+	            if (!pond.startDate) return 0;
+	            const start = new Date(pond.startDate);
+	            const now = new Date();
+	            return Math.floor((now - start) / (1000 * 60 * 60 * 24));
+	        };
+	        const getPondProgress = (pond) => {
+	            const days = getPondDays(pond);
+	            const targetDays = 90; // 假设龙虾养殖周期90天
+	            return Math.min((days / targetDays) * 100, 100);
+	        };
+	        // 饲料费用自动计算
+	        const getFeedCost = (record) => {
+	            return (Number(record.quantity) || 0) * (Number(record.unitPrice) || 0);
 	        };
 	        const openModal = (item) => {
 	            if (item) {
@@ -188,6 +347,8 @@
 	            } else {
 	                const initForm = {};
 	                fields[currentTab.value].forEach(f => initForm[f.key] = '');
+	                // 默认类型设为支出
+	                if(currentTab.value === 'finance') initForm.type = '支出';
 	                formData.value = initForm;
 	            }
 	            showModal.value = true;
@@ -201,18 +362,22 @@
 	                case 'hydrology': dataArr = hydrologyRecords; break;
 	                case 'finance': dataArr = financeRecords; break;
 	            }
+	            // 自动计算饲料成本
+	            if(tab === 'feed') {
+	                formData.value.cost = getFeedCost(formData.value);
+	            }
 	            if (formData.value.id) {
 	                const index = dataArr.value.findIndex(d => d.id === formData.value.id);
 	                if (index !== -1) dataArr.value[index] = { ...formData.value };
 	            } else {
 	                formData.value.id = Date.now().toString();
-	                dataArr.value.push({ ...formData.value });
+	                dataArr.value.unshift({ ...formData.value }); // 新记录插到最前面
 	            }
 	            showModal.value = false;
 	            saveToLocal();
 	        };
 	        const deleteItem = (id) => {
-	            if (!confirm('确定要删除这条记录吗？')) return;
+	            if (!confirm('确定要删除这条记录吗？数据删除后无法恢复！')) return;
 	            const tab = currentTab.value;
 	            switch(tab) {
 	                case 'pond': ponds.value = ponds.value.filter(d => d.id !== id); break;
@@ -230,26 +395,27 @@
 	                hydrologyRecords: hydrologyRecords.value,
 	                financeRecords: financeRecords.value
 	            };
-	            localStorage.setItem('lobsterFarmData', JSON.stringify(data));
+	            localStorage.setItem('lobsterFarmDataV2', JSON.stringify(data));
 	        };
 	        const loadFromLocal = () => {
-	            const saved = localStorage.getItem('lobsterFarmData');
+	            const saved = localStorage.getItem('lobsterFarmDataV2');
 	            if (saved) {
-	                const data = JSON.parse(saved);
-	                ponds.value = data.ponds || [];
-	                feedRecords.value = data.feedRecords || [];
-	                hydrologyRecords.value = data.hydrologyRecords || [];
-	                financeRecords.value = data.financeRecords || [];
+	                try {
+	                    const data = JSON.parse(saved);
+	                    ponds.value = data.ponds || [];
+	                    feedRecords.value = data.feedRecords || [];
+	                    hydrologyRecords.value = data.hydrologyRecords || [];
+	                    financeRecords.value = data.financeRecords || [];
+	                } catch(e) { console.error("数据解析失败", e); }
 	            }
 	        };
-	        // 导入导出
 	        const exportData = () => {
-	            const data = localStorage.getItem('lobsterFarmData');
+	            const data = localStorage.getItem('lobsterFarmDataV2');
 	            const blob = new Blob([data], { type: "application/json" });
 	            const url = URL.createObjectURL(blob);
 	            const a = document.createElement('a');
 	            a.href = url;
-	            a.download = `龙虾养殖数据备份_${new Date().toISOString().slice(0,10)}.json`;
+	            a.download = `龙虾监控系统备份_${new Date().toISOString().slice(0,10)}.json`;
 	            a.click();
 	            URL.revokeObjectURL(url);
 	        };
@@ -261,7 +427,7 @@
 	                try {
 	                    const data = JSON.parse(e.target.result);
 	                    if (data.ponds) {
-	                        localStorage.setItem('lobsterFarmData', JSON.stringify(data));
+	                        localStorage.setItem('lobsterFarmDataV2', JSON.stringify(data));
 	                        loadFromLocal();
 	                        alert('数据导入成功！');
 	                    } else {
@@ -272,14 +438,16 @@
 	                }
 	            };
 	            reader.readAsText(file);
+	            event.target.value = ''; // 清空选择
 	        };
 	        onMounted(() => {
 	            loadFromLocal();
 	        });
 	        return {
 	            currentTab, showModal, formData, ponds, feedRecords, hydrologyRecords, financeRecords,
-	            titles, fields, currentData, modalTitle, totalIncome, totalCost,
-	            getPondName, openModal, saveItem, deleteItem, exportData, importData
+	            titles, fields, currentData, filteredData, financeFilter, modalTitle, totalIncome, totalCost,
+	            getPondName, getPondDays, getPondProgress, getFeedCost,
+	            openModal, saveItem, deleteItem, exportData, importData
 	        };
 	    }
 	}).mount('#app');
